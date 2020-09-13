@@ -1,7 +1,9 @@
 const listElm = document.querySelector('#infinite-list');
 let data
 let originalData
+let orderedData
 let groupedData
+let alreadygrouped
 let groupedDataBy = 'ungroup'
 let nextItem = 0
 let orderKey
@@ -112,12 +114,13 @@ const displayButtonClicked = (target) => {
 
 const mountTableBodyGrouped = (dataGrouped) => {
   const tableBody = document.querySelector('#table-body')
-  for (let i = 0; i < 20; i++) {
+  const init = dataGrouped.length - 20
+  for (let i = init; i < dataGrouped.length; i++) {
     let newRow = document.createElement('tr')
-    const identifier = mountIdentifier(dataGrouped[nextItem].groupName)
+    const identifier = mountIdentifier(dataGrouped[i].groupName)
     newRow.id = `tr-${identifier}`
     const columnOrderBy = document.createElement('td')
-    columnOrderBy.innerText = dataGrouped[nextItem].groupName + ': ' + dataGrouped[nextItem].numberOfElements + ' elem.'
+    columnOrderBy.innerText = dataGrouped[i].groupName + ': ' + dataGrouped[i].numberOfElements + ' elem.'
     newRow.appendChild(columnOrderBy)
     const buttonColumn = document.createElement('td')
     const displayButton = document.createElement('button')
@@ -128,7 +131,6 @@ const mountTableBodyGrouped = (dataGrouped) => {
     displayButton.appendChild(iconChild)
     buttonColumn.appendChild(displayButton)
     newRow.appendChild(buttonColumn)
-    nextItem = nextItem + 1
     tableBody.appendChild(newRow)
   }
 }
@@ -221,13 +223,15 @@ const orderBy = (name) => {
 
 const groupByChanged = () => {
   groupedDataBy = document.querySelector('#groupBy').value
+  nextItem = 0
+  groupedData = []
+  alreadygrouped = []
   if (groupedDataBy === 'ungroup') {
     const tableBody = document.querySelector('#table-body')
     tableBody.innerHTML = ''
-    nextItem = 0
     mountTableBody(originalData)
   } else {
-    const orderedData = [...originalData.sort((a, b) => {
+    orderedData = [...originalData.sort((a, b) => {
       if (groupedDataBy !== 'hour' && groupedDataBy !== 'date') {
         valueA = a[groupedDataBy]
         valueB = b[groupedDataBy]
@@ -246,10 +250,12 @@ const groupByChanged = () => {
       }
       return 0;
     })]
-    const alreadygrouped = []
+    alreadygrouped = []
     groupedData = []
     let rowValue
-    orderedData.forEach((row) => {
+    let index = 0
+    while (groupedData.length < 20) {
+      const row = orderedData[index]
       if (groupedDataBy === 'date') {
         rowValue = row.calldate.split(' ')[0]
       } else if (groupedDataBy === 'hour') {
@@ -293,13 +299,69 @@ const groupByChanged = () => {
             rows: [...filtered],
           },
         ]
-      }
-    })
+        index = index + 1
+      } else index = index + 1
+    }
     const tableBody = document.querySelector('#table-body')
     tableBody.innerHTML = ''
-    nextItem = 0
+    nextItem = index
     mountTableBodyGrouped(groupedData)
   }
+}
+
+const mountMoreGroups = () => {
+  let rowValue
+  let index = nextItem
+  limit = groupedData.length + 20
+  while (groupedData.length < limit) {
+    const row = orderedData[index]
+    if (groupedDataBy === 'date') {
+      rowValue = row.calldate.split(' ')[0]
+    } else if (groupedDataBy === 'hour') {
+      rowValue = row.calldate.split(' ')[1]
+    } else if (groupedDataBy === 'hasrecord'){
+      rowValue = row.hasrecord ? 'has record' : 'no has record'
+    } else {
+      rowValue = row[groupedDataBy]
+    }
+    if (
+      !alreadygrouped.some(
+        (alreadyGroupedBy) => alreadyGroupedBy === rowValue
+      )
+    ) {
+      alreadygrouped.push(rowValue)
+      let filtered
+      if (groupedDataBy === 'date') {
+        filtered = orderedData.filter(
+          (element) => element.calldate.split(' ')[0] === rowValue
+        )
+      } else if (groupedDataBy === 'hour') {
+        filtered = orderedData.filter(
+          (element) => element.calldate.split(' ')[1] === rowValue
+        )
+      } else if (groupedDataBy === 'hasrecord') {
+        const compare = rowValue === 'has record' ? true : false
+        filtered = orderedData.filter(
+          (element) => element[groupedDataBy] === compare
+        )
+      } else {
+        filtered = orderedData.filter(
+          (element) => element[groupedDataBy] === rowValue
+        )
+      }
+
+      groupedData = [
+        ...groupedData,
+        {
+          groupName: rowValue,
+          numberOfElements: filtered.length,
+          rows: [...filtered],
+        },
+      ]
+      index = index + 1
+    } else index = index + 1
+  }
+  nextItem = index
 }
 
 const initTable = () => {
@@ -317,6 +379,7 @@ listElm.addEventListener('scroll', function () {
     if (groupedDataBy === 'ungroup') {
       mountTableBody(data);
     } else {
+      mountMoreGroups()
       mountTableBodyGrouped(groupedData);
     }
   }

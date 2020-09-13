@@ -34,7 +34,7 @@ label:hover {
   min-width: 160px;
 }
 .th-destination, .th-source, .th-date {
-  min-width: 120px;
+  min-width: 100px;
 }
 
 #table-controls {
