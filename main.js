@@ -113,8 +113,9 @@ const displayButtonClicked = (target) => {
 
 
 const mountTableBodyGrouped = (dataGrouped) => {
+  debugger
   const tableBody = document.querySelector('#table-body')
-  const init = dataGrouped.length - 20
+  const init = dataGrouped.length > 19 ? dataGrouped.length - 20 : 0
   for (let i = init; i < dataGrouped.length; i++) {
     let newRow = document.createElement('tr')
     const identifier = mountIdentifier(dataGrouped[i].groupName)
@@ -254,7 +255,7 @@ const groupByChanged = () => {
     groupedData = []
     let rowValue
     let index = 0
-    while (groupedData.length < 20) {
+    while (groupedData.length < 20 && index < (orderedData.length - 1)) {
       const row = orderedData[index]
       if (groupedDataBy === 'date') {
         rowValue = row.calldate.split(' ')[0]
