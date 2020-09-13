@@ -66,23 +66,24 @@ const mountTableBody = (data) => {
   }
 }
 
+const mountIdentifier = (value => {
+  if (typeof value === 'number') {
+    return value.toString()
+  } else if (typeof value === 'string') {
+    const regex = / /gi
+      const regex2 = /\(/gi
+      const regex3 = /\)/gi
+      const regex4 = /\:/gi
+      const value1 = value.replace(regex, '-')
+      const value2 = value1.replace(regex2, '')
+      const value3 = value2.replace(regex3, '-')
+      return value3.replace(regex4, '')
+  }
+})
+
 const displayButtonClicked = (target) => {
   const rowToDisplay = document.querySelector(`#tr-${target.currentTarget.className}`)
   if (rowToDisplay.nextElementSibling.cells.length !== 11){
-    const mountIdentifier = (value => {
-      if (typeof value === 'number') {
-        return value.toString()
-      } else if (typeof value === 'string') {
-        const regex = / /gi
-          const regex2 = /\(/gi
-          const regex3 = /\)/gi
-          const regex4 = /\:/gi
-          const value1 = value.replace(regex, '-')
-          const value2 = value1.replace(regex2, '')
-          const value3 = value2.replace(regex3, '-')
-          return value3.replace(regex4, '')
-      }
-    })
     const dataToDisplay = groupedData.filter(element => mountIdentifier(element.groupName.toString()) === target.currentTarget.className)[0].rows
     dataToDisplay.forEach(row => {
       let newRow = document.createElement('tr')
@@ -114,20 +115,7 @@ const displayButtonClicked = (target) => {
       rowToDisplay.insertAdjacentElement("afterend", newRow)
     })
   } else {
-    const mountIdentifier = (value => {
-      if (typeof value === 'number') {
-        return value.toString()
-      } else if (typeof value === 'string') {
-        const regex = / /gi
-          const regex2 = /\(/gi
-          const regex3 = /\)/gi
-          const regex4 = /\:/gi
-          const value1 = value.replace(regex, '-')
-          const value2 = value1.replace(regex2, '')
-          const value3 = value2.replace(regex3, '-')
-          return value3.replace(regex4, '')
-      }
-    })
+    
     const dataToDisplay = groupedData.filter(element => mountIdentifier(element.groupName.toString()) === target.currentTarget.className)[0].rows
     dataToDisplay.forEach(row => {
       const toDelete = document.querySelector(`.tr-child-${target.currentTarget.className}`)
@@ -142,27 +130,10 @@ const mountTableBodyGrouped = (dataGrouped) => {
   const tableBody = document.querySelector('#table-body')
   for (let i = 0; i < 20; i++) {
     let newRow = document.createElement('tr')
-    const mountIdentifier = (value => {
-      if (typeof value === 'number') {
-        return value.toString()
-      } else if (typeof value === 'string'){
-        const regex = / /gi
-        const regex2 = /\(/gi
-        const regex3 = /\)/gi
-        const regex4 = /\:/gi
-        const value1 = value.replace(regex, '-')
-        const value2 = value1.replace(regex2, '')
-        const value3 = value2.replace(regex3, '-')
-        return value3.replace(regex4, '')
-      } else {
-        if(value === true) return 'hasrecord'
-        else return'nohasrecord'
-      }
-    })
     const identifier = mountIdentifier(dataGrouped[nextItem].groupName)
     newRow.id = `tr-${identifier}`
     const columnOrderBy = document.createElement('td')
-    columnOrderBy.innerText = dataGrouped[nextItem].groupName + ': ' + dataGrouped[nextItem].numberOfElements
+    columnOrderBy.innerText = dataGrouped[nextItem].groupName + ': ' + dataGrouped[nextItem].numberOfElements + ' elem.'
     newRow.appendChild(columnOrderBy)
     const buttonColumn = document.createElement('td')
     const displayButton = document.createElement('button')
