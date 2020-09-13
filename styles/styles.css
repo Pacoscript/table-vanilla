@@ -30,8 +30,11 @@ label:hover {
   border-bottom: 1px solid black;
 }
 
-.th-service, .th-destination, .th-source, .th-date {
-  min-width: 130px;
+.th-service {
+  min-width: 160px;
+}
+.th-destination, .th-source, .th-date {
+  min-width: 120px;
 }
 
 #table-controls {

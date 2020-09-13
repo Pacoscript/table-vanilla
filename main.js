@@ -7,22 +7,6 @@ let nextItem = 0
 let orderKey
 let orderDirection = 'disordered'
 
-const mountGroupOptions = () => {
-  const groupSelect = document.querySelector('#groupBy')
-  let ungroupOption = document.createElement('option')
-  ungroupOption.value = 'ungroup'
-  ungroupOption.innerText = 'ungroup'
-  groupSelect.appendChild(ungroupOption)
-  tableConfig.columns.forEach(element => {
-    if (element.name !== 'note' && element.name !== 'typing' && element.name !== 'poll') {
-      let groupOption = document.createElement('option')
-      groupOption.value = element.name
-      groupOption.innerText = element.name
-      groupSelect.appendChild(groupOption)
-    }
-  })
-}
-
 const mountHeader = () => {
   const tableHeader = document.querySelector('#table-header')
   tableConfig.columns.forEach(element => {
@@ -147,6 +131,22 @@ const mountTableBodyGrouped = (dataGrouped) => {
     nextItem = nextItem + 1
     tableBody.appendChild(newRow)
   }
+}
+
+const mountGroupOptions = () => {
+  const groupSelect = document.querySelector('#groupBy')
+  let ungroupOption = document.createElement('option')
+  ungroupOption.value = 'ungroup'
+  ungroupOption.innerText = 'ungroup'
+  groupSelect.appendChild(ungroupOption)
+  tableConfig.columns.forEach(element => {
+    if (element.name !== 'note' && element.name !== 'typing' && element.name !== 'poll') {
+      let groupOption = document.createElement('option')
+      groupOption.value = element.name
+      groupOption.innerText = element.name
+      groupSelect.appendChild(groupOption)
+    }
+  })
 }
 
 const languageChanged = () => {
