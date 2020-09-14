@@ -1,4 +1,4 @@
-const listElm = document.querySelector('#infinite-list');
+const listElm = document.querySelector('#infinite-list')
 let data
 let originalData
 let orderedData
@@ -11,8 +11,8 @@ let orderDirection = 'disordered'
 
 const mountHeader = () => {
   const tableHeader = document.querySelector('#table-header')
-  tableConfig.columns.forEach(element => {
-    let columnHeader = document.createElement('th');
+  tableConfig.columns.forEach((element) => {
+    let columnHeader = document.createElement('th')
     columnHeader.innerText = element.translation
     columnHeader.className = `th-${element.name}`
     columnHeader.addEventListener('click', () => orderBy(element.name))
@@ -23,8 +23,8 @@ const mountHeader = () => {
 const mountTableBody = (data) => {
   const tableBody = document.querySelector('#table-body')
   for (let i = 0; i < 20; i++) {
-    let newRow = document.createElement('tr');
-    tableConfig.columns.forEach(column => {
+    let newRow = document.createElement('tr')
+    tableConfig.columns.forEach((column) => {
       const tableElement = document.createElement('td')
       let text
       if (column.name === 'date') {
@@ -52,29 +52,35 @@ const mountTableBody = (data) => {
   }
 }
 
-const mountIdentifier = (value => {
+const mountIdentifier = (value) => {
   if (typeof value === 'number') {
     return value.toString()
   } else if (typeof value === 'string') {
     const regex = / /gi
-      const regex2 = /\(/gi
-      const regex3 = /\)/gi
-      const regex4 = /\:/gi
-      const value1 = value.replace(regex, '-')
-      const value2 = value1.replace(regex2, '')
-      const value3 = value2.replace(regex3, '-')
-      return value3.replace(regex4, '')
+    const regex2 = /\(/gi
+    const regex3 = /\)/gi
+    const regex4 = /\:/gi
+    const value1 = value.replace(regex, '-')
+    const value2 = value1.replace(regex2, '')
+    const value3 = value2.replace(regex3, '-')
+    return value3.replace(regex4, '')
   }
-})
+}
 
 const displayButtonClicked = (target) => {
-  const rowToDisplay = document.querySelector(`#tr-${target.currentTarget.className}`)
-  if (rowToDisplay.nextElementSibling.cells.length !== 11){
-    const dataToDisplay = groupedData.filter(element => mountIdentifier(element.groupName.toString()) === target.currentTarget.className)[0].rows
-    dataToDisplay.forEach(row => {
+  const rowToDisplay = document.querySelector(
+    `#tr-${target.currentTarget.className}`
+  )
+  if (rowToDisplay.nextElementSibling.cells.length !== 11) {
+    const dataToDisplay = groupedData.filter(
+      (element) =>
+        mountIdentifier(element.groupName.toString()) ===
+        target.currentTarget.className
+    )[0].rows
+    dataToDisplay.forEach((row) => {
       let newRow = document.createElement('tr')
       newRow.className = `tr-child-${target.currentTarget.className}`
-      tableConfig.columns.forEach(column => {
+      tableConfig.columns.forEach((column) => {
         const tableElement = document.createElement('td')
         let text
         if (column.name === 'date') {
@@ -98,19 +104,23 @@ const displayButtonClicked = (target) => {
         newRow.appendChild(tableElement)
         nextItem = nextItem + 1
       })
-      rowToDisplay.insertAdjacentElement("afterend", newRow)
+      rowToDisplay.insertAdjacentElement('afterend', newRow)
     })
   } else {
-    
-    const dataToDisplay = groupedData.filter(element => mountIdentifier(element.groupName.toString()) === target.currentTarget.className)[0].rows
-    dataToDisplay.forEach(row => {
-      const toDelete = document.querySelector(`.tr-child-${target.currentTarget.className}`)
-      const padre = toDelete.parentNode;
-		  padre.removeChild(toDelete);
+    const dataToDisplay = groupedData.filter(
+      (element) =>
+        mountIdentifier(element.groupName.toString()) ===
+        target.currentTarget.className
+    )[0].rows
+    dataToDisplay.forEach((row) => {
+      const toDelete = document.querySelector(
+        `.tr-child-${target.currentTarget.className}`
+      )
+      const padre = toDelete.parentNode
+      padre.removeChild(toDelete)
     })
   }
 }
-
 
 const mountTableBodyGrouped = (dataGrouped) => {
   debugger
@@ -121,7 +131,11 @@ const mountTableBodyGrouped = (dataGrouped) => {
     const identifier = mountIdentifier(dataGrouped[i].groupName)
     newRow.id = `tr-${identifier}`
     const columnOrderBy = document.createElement('td')
-    columnOrderBy.innerText = dataGrouped[i].groupName + ': ' + dataGrouped[i].numberOfElements + ' elem.'
+    columnOrderBy.innerText =
+      dataGrouped[i].groupName +
+      ': ' +
+      dataGrouped[i].numberOfElements +
+      ' elem.'
     newRow.appendChild(columnOrderBy)
     const buttonColumn = document.createElement('td')
     const displayButton = document.createElement('button')
@@ -142,8 +156,12 @@ const mountGroupOptions = () => {
   ungroupOption.value = 'ungroup'
   ungroupOption.innerText = 'ungroup'
   groupSelect.appendChild(ungroupOption)
-  tableConfig.columns.forEach(element => {
-    if (element.name !== 'note' && element.name !== 'typing' && element.name !== 'poll') {
+  tableConfig.columns.forEach((element) => {
+    if (
+      element.name !== 'note' &&
+      element.name !== 'typing' &&
+      element.name !== 'poll'
+    ) {
       let groupOption = document.createElement('option')
       groupOption.value = element.name
       groupOption.innerText = element.name
@@ -154,12 +172,11 @@ const mountGroupOptions = () => {
 
 const languageChanged = () => {
   const languageSelect = document.querySelector('#languages').value
-  tableConfig.columns.forEach(column => {
+  tableConfig.columns.forEach((column) => {
     const text = languageSelect === 'english' ? column.name : column.translation
     let columnHeader = document.querySelector(`.th-${column.name}`)
     columnHeader.innerText = text
   })
-
 }
 
 const orderBy = (name) => {
@@ -176,45 +193,49 @@ const orderBy = (name) => {
   }
 
   if (orderDirection === 'asc') {
-    data = [...data.sort((a, b) => {
-      if (name !== 'hour' && name !== 'date') {
-        valueA = a[name]
-        valueB = b[name]
-      } else if (name === 'date') {
-        valueA = a.calldate.split(' ')[0]
-        valueB = b.calldate.split(' ')[0]
-      } else {
-        valueA = a.calldate.split(' ')[1]
-        valueB = b.calldate.split(' ')[1]
-      }
-      if (valueA > valueB) {
-        return 1;
-      }
-      if (valueA < valueB) {
-        return -1;
-      }
-      return 0;
-    })]
+    data = [
+      ...data.sort((a, b) => {
+        if (name !== 'hour' && name !== 'date') {
+          valueA = a[name]
+          valueB = b[name]
+        } else if (name === 'date') {
+          valueA = a.calldate.split(' ')[0]
+          valueB = b.calldate.split(' ')[0]
+        } else {
+          valueA = a.calldate.split(' ')[1]
+          valueB = b.calldate.split(' ')[1]
+        }
+        if (valueA > valueB) {
+          return 1
+        }
+        if (valueA < valueB) {
+          return -1
+        }
+        return 0
+      }),
+    ]
   } else if (orderDirection === 'desc') {
-    data = [...data.sort((a, b) => {
-      if (name !== 'hour' && name !== 'date') {
-        valueA = a[name]
-        valueB = b[name]
-      } else if (name === 'date') {
-        valueA = a.calldate.split(' ')[0]
-        valueB = b.calldate.split(' ')[0]
-      } else {
-        valueA = a.calldate.split(' ')[1]
-        valueB = b.calldate.split(' ')[1]
-      }
-      if (valueA < valueB) {
-        return 1;
-      }
-      if (valueA > valueB) {
-        return -1;
-      }
-      return 0;
-    })]
+    data = [
+      ...data.sort((a, b) => {
+        if (name !== 'hour' && name !== 'date') {
+          valueA = a[name]
+          valueB = b[name]
+        } else if (name === 'date') {
+          valueA = a.calldate.split(' ')[0]
+          valueB = b.calldate.split(' ')[0]
+        } else {
+          valueA = a.calldate.split(' ')[1]
+          valueB = b.calldate.split(' ')[1]
+        }
+        if (valueA < valueB) {
+          return 1
+        }
+        if (valueA > valueB) {
+          return -1
+        }
+        return 0
+      }),
+    ]
   } else data = [...originalData]
   const tableBody = document.querySelector('#table-body')
   tableBody.innerHTML = ''
@@ -232,36 +253,38 @@ const groupByChanged = () => {
     tableBody.innerHTML = ''
     mountTableBody(originalData)
   } else {
-    orderedData = [...originalData.sort((a, b) => {
-      if (groupedDataBy !== 'hour' && groupedDataBy !== 'date') {
-        valueA = a[groupedDataBy]
-        valueB = b[groupedDataBy]
-      } else if (groupedDataBy === 'date') {
-        valueA = a.calldate.split(' ')[0]
-        valueB = b.calldate.split(' ')[0]
-      } else {
-        valueA = a.calldate.split(' ')[1]
-        valueB = b.calldate.split(' ')[1]
-      }
-      if (valueA > valueB) {
-        return 1;
-      }
-      if (valueA < valueB) {
-        return -1;
-      }
-      return 0;
-    })]
+    orderedData = [
+      ...originalData.sort((a, b) => {
+        if (groupedDataBy !== 'hour' && groupedDataBy !== 'date') {
+          valueA = a[groupedDataBy]
+          valueB = b[groupedDataBy]
+        } else if (groupedDataBy === 'date') {
+          valueA = a.calldate.split(' ')[0]
+          valueB = b.calldate.split(' ')[0]
+        } else {
+          valueA = a.calldate.split(' ')[1]
+          valueB = b.calldate.split(' ')[1]
+        }
+        if (valueA > valueB) {
+          return 1
+        }
+        if (valueA < valueB) {
+          return -1
+        }
+        return 0
+      }),
+    ]
     alreadygrouped = []
     groupedData = []
     let rowValue
     let index = 0
-    while (groupedData.length < 20 && index < (orderedData.length - 1)) {
+    while (groupedData.length < 20 && index < orderedData.length - 1) {
       const row = orderedData[index]
       if (groupedDataBy === 'date') {
         rowValue = row.calldate.split(' ')[0]
       } else if (groupedDataBy === 'hour') {
         rowValue = row.calldate.split(' ')[1]
-      } else if (groupedDataBy === 'hasrecord'){
+      } else if (groupedDataBy === 'hasrecord') {
         rowValue = row.hasrecord ? 'has record' : 'no has record'
       } else {
         rowValue = row[groupedDataBy]
@@ -320,15 +343,13 @@ const mountMoreGroups = () => {
       rowValue = row.calldate.split(' ')[0]
     } else if (groupedDataBy === 'hour') {
       rowValue = row.calldate.split(' ')[1]
-    } else if (groupedDataBy === 'hasrecord'){
+    } else if (groupedDataBy === 'hasrecord') {
       rowValue = row.hasrecord ? 'has record' : 'no has record'
     } else {
       rowValue = row[groupedDataBy]
     }
     if (
-      !alreadygrouped.some(
-        (alreadyGroupedBy) => alreadyGroupedBy === rowValue
-      )
+      !alreadygrouped.some((alreadyGroupedBy) => alreadyGroupedBy === rowValue)
     ) {
       alreadygrouped.push(rowValue)
       let filtered
@@ -367,26 +388,25 @@ const mountMoreGroups = () => {
 
 const initTable = () => {
   fetch('./exerciceUITable.json')
-    .then(response => response.json())
-    .then(response => {
-      data = [...response];
+    .then((response) => response.json())
+    .then((response) => {
+      data = [...response]
       originalData = [...response]
-      mountTableBody(data);
+      mountTableBody(data)
     })
 }
 
 listElm.addEventListener('scroll', function () {
   if (listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight) {
     if (groupedDataBy === 'ungroup') {
-      mountTableBody(data);
+      mountTableBody(data)
     } else {
       mountMoreGroups()
-      mountTableBodyGrouped(groupedData);
+      mountTableBodyGrouped(groupedData)
     }
   }
-});
+})
 
-mountGroupOptions();
-mountHeader();
-initTable();
-
+mountGroupOptions()
+mountHeader()
+initTable()
